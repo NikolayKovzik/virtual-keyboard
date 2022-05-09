@@ -43,6 +43,8 @@
   background-color: #6fb7c2;
   border-radius: 5px;
   cursor: pointer;
+  font-size: 20px;
+  font-weight: bold;
 }
 .keyboard__key:hover {
   transition: 0.5s;
