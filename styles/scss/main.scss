@@ -10,19 +10,17 @@
     font-family: "Montserrat";
 }
 
-.textarea {
-    &__input {
-        width: 1220px;
-        height: 200px;
-        padding: 10px;
-        border: 2px solid #1f1a76;
-        border-radius: 5px;
-        box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
-        overflow: auto;
-        outline: none;
-        resize: none;
-        font-size: 30px;
-    }
+.textarea__input {
+    width: 1220px;
+    height: 200px;
+    padding: 10px;
+    border: 2px solid #1f1a76;
+    border-radius: 5px;
+    box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
+    overflow: auto;
+    outline: none;
+    resize: none;
+    font-size: 30px;
 }
 
 .keyboard {
@@ -32,14 +30,9 @@
     background-color: #85a3d9;
     border-radius: 8px;
     display: flex;
-    flex-direction: column;
-    &__row {
-        width: 100%;
-        height: 20%;
-        display: flex;
-        justify-content: space-between;
-        gap: 15px;
-    }
+    flex-wrap: wrap;
+    justify-content: space-between;
+    column-gap: 15px;
 
     &__key {
         width: 65px;
