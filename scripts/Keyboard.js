@@ -6,6 +6,8 @@ export class Keyboard {
     this.display = null;
     this.isCapsPressed = false;
     this.isShiftPressed = false;
+    this.isControlPressed = false;
+    this.isAltPressed = false;
     this.keyCodes = [];
     this.init();
   }
@@ -24,10 +26,12 @@ export class Keyboard {
     document.body.appendChild(main);
     main.appendChild(form);
     form.appendChild(this.display);
-    
+
     this.createVirtualKeys(keyboardSection);
     this.display.addEventListener('keydown', (event) => { this.keyDownEventHandler(event) });
+    this.display.addEventListener('keyup', (event) => { this.keyUpEventHandler(event) });
     main.appendChild(keyboardSection);
+    this.display.focus();
   }
 
   createVirtualKeys(keyboardSection) {
@@ -45,7 +49,6 @@ export class Keyboard {
           break;
         case 'Enter':
           keyButton.addEventListener('click', () => {
-            this.deleteSelected(key.code);
             this.insertCharacter(key);
           });
           break;
@@ -81,7 +84,6 @@ export class Keyboard {
         this.deleteSelected(event.code);
         break;
       case 'Enter':
-        this.deleteSelected(event.code);
         this.insertCharacter(keys.find((key) => {
           return key.code === 'Enter' ? true : false;
         }));
@@ -92,12 +94,54 @@ export class Keyboard {
       case 'Delete':
         this.deleteSelected(event.code);
         break;
+      case 'ControlRight':
+        this.isControlPressed = true;
+        if(this.isControlPressed && this.isAltPressed){
+          this.switchLang();
+        }
+        break;
+      case 'ControlLeft':
+        this.isControlPressed = true;
+        if(this.isControlPressed && this.isAltPressed){
+          this.switchLang();
+        }
+        break;
+      case 'AltRight':
+        this.isAltPressed = true;
+        if(this.isControlPressed && this.isAltPressed){
+          this.switchLang();
+        }
+        break;
+      case 'AltLeft':
+        this.isAltPressed = true;
+        if(this.isControlPressed && this.isAltPressed){
+          this.switchLang();
+        }
+        break;
       default:
         if (this.keyCodes.includes(event.code)) {
           this.insertCharacter(keys.find((key) => {
             return key.code === `${event.code}` ? true : false;
           }));
         }
+        break;
+    }
+  }
+
+  keyUpEventHandler(event) {
+    event.preventDefault();
+    switch (event.code) {
+      case 'ControlRight':
+        this.isControlPressed = false;
+        break;
+      case 'ControlLeft':
+        this.isControlPressed = false;
+        break;
+      case 'AltRight':
+        this.isAltPressed = false;
+        break;
+      case 'AltLeft':
+        this.isAltPressed = false;
         break;
     }
   }
