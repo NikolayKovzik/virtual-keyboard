@@ -40,7 +40,7 @@ export class Keyboard {
       switch (key.code) {
         case 'Backspace':
           keyButton.addEventListener('click', () => {
-            // this.deleteSelected();
+            this.deleteSelected(key.code);
           });
           break;
         case 'Enter':
@@ -56,7 +56,7 @@ export class Keyboard {
           break;
         case 'Delete':
           keyButton.addEventListener('click', () => {
-            this.display.focus();
+            this.deleteSelected(key.code);
           });
           break;
         case 'Lang':
@@ -126,12 +126,37 @@ export class Keyboard {
     }
   }
 
-  deleteSelected() {
+  deleteSelected(keyCode) {
     let startPos = this.display.selectionStart;
     let endPos = this.display.selectionEnd;
-    if(startPos === endPos){
-      this.display.value = this.display.value.slice(0, startPos-1) + this.display.value.slice(endPos, this.display.value.length);
+    let value = this.display.value;
+
+    if (startPos === endPos && startPos === 0 && keyCode === 'Backspace') {
+      this.display.focus();
+      this.display.selectionStart = 0;
+      this.display.selectionEnd = 0;
+      return;
     }
-    console.log(startPos,endPos)
+
+    if (startPos === endPos && keyCode === 'Backspace') {
+      this.display.value = value.slice(0, startPos - 1) + value.slice(endPos, value.length);
+      this._setCursorPosition(startPos, 1);
+    }
+
+    if (startPos === endPos && keyCode === 'Delete') {
+      this.display.value = value.slice(0, startPos) + value.slice(endPos + 1, value.length);
+      this._setCursorPosition(startPos, 0);
+    }
+
+    if(startPos !== endPos){
+      this.display.value = value.slice(0, startPos) + value.slice(endPos, value.length);
+      this._setCursorPosition(startPos, 0);
+    }
   }
+
+  _setCursorPosition = (startPos, shift) => {
+    this.display.focus();
+    this.display.selectionStart = startPos - shift;
+    this.display.selectionEnd = startPos - shift;
+  };
 }
