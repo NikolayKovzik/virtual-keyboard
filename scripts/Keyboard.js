@@ -2,70 +2,106 @@
 import keys from "./keys.js";
 export class Keyboard {
   constructor(lang) {
-    // this.lang = lang;
+    this.lang = lang;
+    this.display = null;
+    this.isCapsPressed = false;
     // this.keys = [];
     // this.isShift = true;
-    // this.isCtrl = true;
     this.init();
   }
 
   init() {
     const main = document.createElement('main');
     const form = document.createElement('form');
-    const textarea = document.createElement('textarea');
+    this.display = document.createElement('textarea');
     const keyboardSection = document.createElement('section');
 
     main.classList.add('main');
     form.classList.add('textarea__form');
-    textarea.classList.add('textarea__input');
+    this.display.classList.add('textarea__input');
     keyboardSection.classList.add('keyboard');
 
     document.body.appendChild(main);
     main.appendChild(form);
-    form.appendChild(textarea);
-    main.appendChild(keyboardSection);
+    form.appendChild(this.display);
     this.createKeys(keyboardSection);
+    main.appendChild(keyboardSection);
   }
 
   createKeys(keyboardSection) {
     keys.forEach((key) => {
-      console.log(key);
       const keyButton = document.createElement('button');
       keyButton.classList.add('keyboard__key');
-      keyButton.innerHTML = key.en;
+      keyButton.innerHTML = key[`${this.lang}`];
+      keyButton.classList.add(`${key.code}`);
       switch (key.code) {
-        case "backspace":
-          keyButton.classList.add('backspace');
+        case "Backspace":
+          keyButton.addEventListener('click', () => {
+            this.display.value = this.display.value.substring(0, this.display.value.length - 1);
+            this.display.focus();
+          })
           break;
-        case "tab":
-          keyButton.classList.add('tab');
+        case "Enter":
+          keyButton.addEventListener('click', () => {
+            this.display.value += '\n';
+            this.display.focus();
+          })
           break;
-        case "delete":
-          keyButton.classList.add('delete');
+        case "CapsLock":
+          keyButton.addEventListener('click', () => {
+            this.toggleCapsLock();
+          })
           break;
-        case "capsLock":
-          keyButton.classList.add('caps-lock');
+        case "Delete":
+          keyButton.addEventListener('click', () => {
+            this.display.value = this.display.value.substring(0, this.display.value.length - 1);
+            this.display.focus();
+          })
           break;
-        case "enter":
-          keyButton.classList.add('enter');
+        default:
+          keyButton.addEventListener('click', () => {
+            this.display.value += key[`${this.lang}`];
+            this.display.focus();
+          })
           break;
-        case "leftShift":
-          keyButton.classList.add('left-shift');
-          break;
-        case "rightShift":
-          keyButton.classList.add('right-shift');
-          break;
-        case "leftControl":
-          keyButton.classList.add('left-control');
-          break;
-        case "rightControl":
-          keyButton.classList.add('right-control');
-          break;
-        case "space":
-          keyButton.classList.add('space');
-          break;
+        // case "CapsLock":
+        //   if(!this.isCapsPressed)
+        //   break;
+        // case "Tab":
+        //   break;
+        // case "Delete":
+        //   break;
+        // case "LeftShift":
+        //   break;
+        // case "RightShift":
+        //   break;
+        // case "ControlLeft":
+        //   break;
+        // case "ControlRight":
+        //   break;
+        // case "Space":
+        //   break;
       }
       keyboardSection.appendChild(keyButton);
     })
   }
+
+  toggleCapsLock() {
+    this.isCapsPressed = this.isCapsPressed ? false : true;
+    if (this.isCapsPressed) {
+      keys.forEach((key) => {
+        if (`${this.lang}Caps` in key) {
+          document.querySelector(`.${key.code}`).innerHTML = key[`${this.lang}Caps`];
+        }
+      })
+    } else {
+      keys.forEach((key) => {
+        if (`${this.lang}Caps` in key) {
+          document.querySelector(`.${key.code}`).innerHTML = key[`${this.lang}`];
+        }
+      })
+    }
+  }
 }
+
+

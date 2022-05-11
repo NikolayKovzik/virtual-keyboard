@@ -39,6 +39,8 @@
         height: 65px;
         background-color: #6fb7c2;
         border-radius: 5px;
+        padding: 0;
+        margin: 0;
         cursor: pointer;
         font-size: 20px;
         font-weight: bold;
@@ -52,36 +54,36 @@
     }
 }
 
-.backspace {
+.Backspace {
     width: 185px;
 }
 
-.tab {
+.Tab {
     width: 85px;
 }
 
-.delete {
+.Delete {
     width: 85px;
 }
 
-.caps-lock {
+.CapsLock {
     width: 120px;
 }
 
-.enter {
+.Enter {
     width: 210px;
 }
 
-.left-shift,
-.right-shift {
+.ShiftRight,
+.ShiftLeft {
     width: 170px;
 }
 
-.space {
+.Space {
     width: 520px;
 }
 
-.right-control,
-.left-control {
+.ControlRight,
+.Controlleft {
     width: 90px;
 }
