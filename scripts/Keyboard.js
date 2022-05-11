@@ -6,7 +6,7 @@ export class Keyboard {
     this.display = null;
     this.isCapsPressed = false;
     this.isShiftPressed = false;
-    // this.keys = [];
+    this.keys = [];
     this.init();
   }
 
@@ -19,20 +19,47 @@ export class Keyboard {
     main.classList.add('main');
     form.classList.add('textarea__form');
     this.display.classList.add('textarea__input');
-    this.display.addEventListener('keydown', (event) => {
-      event.preventDefault();
-    });
+   
     keyboardSection.classList.add('keyboard');
 
     document.body.appendChild(main);
     main.appendChild(form);
     form.appendChild(this.display);
     this.createKeys(keyboardSection);
+    console.log(this.keys);
+    this.display.addEventListener('keydown', (event) => {
+      event.preventDefault();
+      switch (event.code) {
+        case 'Backspace': 
+            this.deleteSelected(event.code);
+          break;
+        case 'Enter':    
+            this.deleteSelected(event.code);
+            this.insertCharacter(keys.find((key)=>{
+              return key.code === 'Enter' ? true : false;
+            }));
+          break;
+        case 'CapsLock':   
+            this.toggleCapsLock();
+          break;
+        case 'Delete':
+            this.deleteSelected(event.code);
+          break;
+        default:
+            if(this.keys.includes(event.code)){
+              this.insertCharacter(keys.find((key)=>{
+                return key.code === `${event.code}` ? true : false;
+              }));
+            }
+          break;
+      }
+    });
     main.appendChild(keyboardSection);
   }
 
   createKeys(keyboardSection) {
     keys.forEach((key) => {
+      this.keys.push(key.code);
       const keyButton = document.createElement('button');
       keyButton.classList.add('keyboard__key');
       keyButton.innerHTML = key[`${this.lang}`];
@@ -69,14 +96,6 @@ export class Keyboard {
             this.insertCharacter(key);
           });
           break;
-        // case "LeftShift":
-        //   break;
-        // case "RightShift":
-        //   break;
-        // case "ControlLeft":
-        //   break;
-        // case "ControlRight":
-        //   break;
       }
       keyboardSection.appendChild(keyButton);
     });
