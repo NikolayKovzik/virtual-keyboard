@@ -4,10 +4,6 @@ import { Keyboard } from "./Keyboard.js";
 
 let keyboard = new Keyboard('en');
 
-// alert("Буду очень признателен, если проверите мою работу завтра, спасибо!")
+alert("Буду очень признателен, если проверите мою работу в четверг, спасибо! Если всё-таки проверяете сегодня, оставьте пожалуйста контакт для обратной связи)")
 
-
-document.addEventListener("keydown", function (event) {
-    // The parameter event is of the type KeyboardEvent
-  	console.log(event.code);
-});
+console.log(keyboard.display)
