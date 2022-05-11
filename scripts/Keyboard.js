@@ -46,7 +46,7 @@ export class Keyboard {
         case 'Enter':
           keyButton.addEventListener('click', () => {
             this.deleteSelected(key.code);
-            this.lineBreak();
+            this.insertCharacter(key);
           });
           break;
         case 'CapsLock':
@@ -66,15 +66,9 @@ export class Keyboard {
           break;
         default:
           keyButton.addEventListener('click', () => {
-            this.display.value += this.isCapsPressed ? key[`${this.lang}Caps`] : key[`${this.lang}`];
-            this.display.focus();
+            this.insertCharacter(key);
           });
           break;
-        // case "CapsLock":
-        //   if(!this.isCapsPressed)
-        //   break;
-        // case "Tab":
-        //   break;
         // case "LeftShift":
         //   break;
         // case "RightShift":
@@ -83,11 +77,39 @@ export class Keyboard {
         //   break;
         // case "ControlRight":
         //   break;
-        // case "Space":
-        //   break;
       }
       keyboardSection.appendChild(keyButton);
     });
+  }
+
+  insertCharacter(key) {
+    let startPos = this.display.selectionStart;
+    let endPos = this.display.selectionEnd;
+    let value = this.display.value;
+    let symbol = '';
+    if (key.type !== 'comand') {
+      if (!this.isCapsPressed) {
+        symbol = key[`${this.lang}`];
+      } else if (`${this.lang}Caps` in key) {
+        symbol = key[`${this.lang}Caps`];
+      } else {
+        symbol = key[`${this.lang}`];
+      }
+    }
+
+    if (key.code === 'Enter'){
+      symbol = '\n';
+    }
+    if (key.code === 'Tab'){
+      symbol = '\t';
+    }
+
+    if (startPos !== endPos) {
+      this.display.value = value.slice(0, startPos) + value.slice(endPos, value.length);
+    }
+    this.display.value = value.slice(0, startPos) + symbol + value.slice(endPos, value.length);
+    this._setCursorPosition(startPos, -1);
+
   }
 
   toggleCapsLock() {
@@ -146,23 +168,26 @@ export class Keyboard {
       this._setCursorPosition(startPos, 0);
     }
 
-    if(startPos !== endPos){
+    if (startPos !== endPos) {
       this.display.value = value.slice(0, startPos) + value.slice(endPos, value.length);
       this._setCursorPosition(startPos, 0);
     }
   }
 
-  _setCursorPosition (startPos, shift) {
+  _setCursorPosition(startPos, shift) {
     this.display.focus();
     this.display.selectionStart = startPos - shift;
     this.display.selectionEnd = startPos - shift;
   };
 
-  lineBreak() {
-    let startPos = this.display.selectionStart;
-    let endPos = this.display.selectionEnd;
-    let value = this.display.value;
-    this.display.value = value.slice(0, startPos) + '\n' + value.slice(endPos, value.length);
-    this._setCursorPosition(startPos, -1);
-  }
+  // lineBreak() {
+  //   let startPos = this.display.selectionStart;
+  //   let endPos = this.display.selectionEnd;
+  //   let value = this.display.value;
+  //   if (startPos !== endPos) {
+  //     this.display.value = value.slice(0, startPos) + value.slice(endPos, value.length);
+  //   }
+  //   this.display.value = value.slice(0, startPos) + '\n' + value.slice(endPos, value.length);
+  //   this._setCursorPosition(startPos, -1);
+  // }
 }

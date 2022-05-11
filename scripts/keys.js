@@ -93,6 +93,7 @@ export default [
   },
   {
     code: 'Backspace',
+    type: 'comand',
     en: 'Backspace',
     ru: 'Backspace',
     enShift: 'Backspace',
@@ -100,6 +101,7 @@ export default [
   },
   {
     code: 'Tab',
+    type: 'comand',
     en: 'Tab',
     ru: 'Tab',
     enShift: 'Tab',
@@ -220,6 +222,7 @@ export default [
   },
   {
     code: 'Delete',
+    type: 'comand',
     en: 'delete',
     ru: 'delete',
     enShift: 'delete',
@@ -227,6 +230,7 @@ export default [
   },
   {
     code: 'CapsLock',
+    type: 'comand',
     en: 'Caps Lock',
     ru: 'Caps Lock',
     enShift: 'Caps Lock',
@@ -331,6 +335,7 @@ export default [
   },
   {
     code: 'Enter',
+    type: 'comand',
     en: 'Enter',
     ru: 'Enter',
     enShift: 'Enter',
@@ -338,6 +343,7 @@ export default [
   },
   {
     code: 'ShiftLeft',
+    type: 'comand',
     en: 'Shift',
     ru: 'Shift',
     enShift: 'Shift',
@@ -438,6 +444,7 @@ export default [
   },
   {
     code: 'ShiftRight',
+    type: 'comand',
     en: 'Shift',
     ru: 'Shift',
     enShift: 'Shift',
@@ -445,6 +452,7 @@ export default [
   },
   {
     code: 'ControlLeft',
+    type: 'comand',
     en: 'Ctrl',
     ru: 'Ctrl',
     enShift: 'Ctrl',
@@ -452,6 +460,7 @@ export default [
   },
   {
     code: 'AltLeft',
+    type: 'comand',
     en: 'Alt',
     ru: 'Alt',
     enShift: 'Alt',
@@ -466,6 +475,7 @@ export default [
   },
   {
     code: 'AltRight',
+    type: 'comand',
     en: 'Alt',
     ru: 'Alt',
     enShift: 'Alt',
@@ -473,6 +483,7 @@ export default [
   },
   {
     code: 'ControlRight',
+    type: 'comand',
     en: 'Ctrl',
     ru: 'Ctrl',
     enShift: 'Ctrl',
@@ -501,6 +512,7 @@ export default [
   },
   {
     code: 'Lang',
+    type: 'comand',
     en: 'ru',
     ru: 'en',
     enShift: 'ru',
