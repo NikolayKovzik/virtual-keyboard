@@ -6,7 +6,7 @@ export class Keyboard {
     this.display = null;
     this.isCapsPressed = false;
     this.isShiftPressed = false;
-    this.keys = [];
+    this.keyCodes = [];
     this.init();
   }
 
@@ -19,47 +19,20 @@ export class Keyboard {
     main.classList.add('main');
     form.classList.add('textarea__form');
     this.display.classList.add('textarea__input');
-   
     keyboardSection.classList.add('keyboard');
 
     document.body.appendChild(main);
     main.appendChild(form);
     form.appendChild(this.display);
-    this.createKeys(keyboardSection);
-    console.log(this.keys);
-    this.display.addEventListener('keydown', (event) => {
-      event.preventDefault();
-      switch (event.code) {
-        case 'Backspace': 
-            this.deleteSelected(event.code);
-          break;
-        case 'Enter':    
-            this.deleteSelected(event.code);
-            this.insertCharacter(keys.find((key)=>{
-              return key.code === 'Enter' ? true : false;
-            }));
-          break;
-        case 'CapsLock':   
-            this.toggleCapsLock();
-          break;
-        case 'Delete':
-            this.deleteSelected(event.code);
-          break;
-        default:
-            if(this.keys.includes(event.code)){
-              this.insertCharacter(keys.find((key)=>{
-                return key.code === `${event.code}` ? true : false;
-              }));
-            }
-          break;
-      }
-    });
+    
+    this.createVirtualKeys(keyboardSection);
+    this.display.addEventListener('keydown', (event) => { this.keyDownEventHandler(event) });
     main.appendChild(keyboardSection);
   }
 
-  createKeys(keyboardSection) {
+  createVirtualKeys(keyboardSection) {
     keys.forEach((key) => {
-      this.keys.push(key.code);
+      this.keyCodes.push(key.code);
       const keyButton = document.createElement('button');
       keyButton.classList.add('keyboard__key');
       keyButton.innerHTML = key[`${this.lang}`];
@@ -99,6 +72,34 @@ export class Keyboard {
       }
       keyboardSection.appendChild(keyButton);
     });
+  }
+
+  keyDownEventHandler(event) {
+    event.preventDefault();
+    switch (event.code) {
+      case 'Backspace':
+        this.deleteSelected(event.code);
+        break;
+      case 'Enter':
+        this.deleteSelected(event.code);
+        this.insertCharacter(keys.find((key) => {
+          return key.code === 'Enter' ? true : false;
+        }));
+        break;
+      case 'CapsLock':
+        this.toggleCapsLock();
+        break;
+      case 'Delete':
+        this.deleteSelected(event.code);
+        break;
+      default:
+        if (this.keyCodes.includes(event.code)) {
+          this.insertCharacter(keys.find((key) => {
+            return key.code === `${event.code}` ? true : false;
+          }));
+        }
+        break;
+    }
   }
 
   insertCharacter(key) {
