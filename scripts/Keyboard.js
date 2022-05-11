@@ -45,8 +45,8 @@ export class Keyboard {
           break;
         case 'Enter':
           keyButton.addEventListener('click', () => {
-            this.display.value += '\n';
-            this.display.focus();
+            this.deleteSelected(key.code);
+            this.lineBreak();
           });
           break;
         case 'CapsLock':
@@ -74,8 +74,6 @@ export class Keyboard {
         //   if(!this.isCapsPressed)
         //   break;
         // case "Tab":
-        //   break;
-        // case "Delete":
         //   break;
         // case "LeftShift":
         //   break;
@@ -154,9 +152,17 @@ export class Keyboard {
     }
   }
 
-  _setCursorPosition = (startPos, shift) => {
+  _setCursorPosition (startPos, shift) {
     this.display.focus();
     this.display.selectionStart = startPos - shift;
     this.display.selectionEnd = startPos - shift;
   };
+
+  lineBreak() {
+    let startPos = this.display.selectionStart;
+    let endPos = this.display.selectionEnd;
+    let value = this.display.value;
+    this.display.value = value.slice(0, startPos) + '\n' + value.slice(endPos, value.length);
+    this._setCursorPosition(startPos, -1);
+  }
 }
