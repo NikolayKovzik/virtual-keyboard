@@ -101,7 +101,6 @@ export default [
   },
   {
     code: 'Tab',
-    type: 'comand',
     en: 'Tab',
     ru: 'Tab',
     enShift: 'Tab',
@@ -335,7 +334,6 @@ export default [
   },
   {
     code: 'Enter',
-    type: 'comand',
     en: 'Enter',
     ru: 'Enter',
     enShift: 'Enter',

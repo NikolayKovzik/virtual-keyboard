@@ -87,6 +87,7 @@ export class Keyboard {
     let endPos = this.display.selectionEnd;
     let value = this.display.value;
     let symbol = '';
+
     if (key.type !== 'comand') {
       if (!this.isCapsPressed) {
         symbol = key[`${this.lang}`];
@@ -95,38 +96,44 @@ export class Keyboard {
       } else {
         symbol = key[`${this.lang}`];
       }
-    }
 
-    if (key.code === 'Enter'){
-      symbol = '\n';
-    }
-    if (key.code === 'Tab'){
-      symbol = '\t';
-    }
+      if (key.code === 'Enter') {
+        symbol = '\n';
+      }
+      if (key.code === 'Tab') {
+        symbol = '\t';
+      }
 
-    if (startPos !== endPos) {
-      this.display.value = value.slice(0, startPos) + value.slice(endPos, value.length);
+      // if (startPos !== endPos) {
+      //   this.display.value = value.slice(0, startPos) + value.slice(endPos, value.length);
+      // }
+
+      this.display.value = value.slice(0, startPos) + symbol + value.slice(endPos, value.length);
+      this._setCursorPosition(startPos, -1);
+    } else {
+      this._setCursorPosition(startPos, 0);
     }
-    this.display.value = value.slice(0, startPos) + symbol + value.slice(endPos, value.length);
-    this._setCursorPosition(startPos, -1);
 
   }
 
   toggleCapsLock() {
     this.isCapsPressed = this.isCapsPressed ? false : true;
     if (this.isCapsPressed) {
+      document.querySelector('.CapsLock').classList.add('active');
       keys.forEach((key) => {
         if (`${this.lang}Caps` in key) {
           document.querySelector(`.${key.code}`).innerHTML = key[`${this.lang}Caps`];
         }
       })
     } else {
+      document.querySelector('.CapsLock').classList.remove('active');
       keys.forEach((key) => {
         if (`${this.lang}Caps` in key) {
           document.querySelector(`.${key.code}`).innerHTML = key[`${this.lang}`];
         }
       })
     }
+    this._setCursorPosition(this.display.selectionStart, 0);
   }
 
   switchLang() {
