@@ -19,6 +19,10 @@ body {
   font-size: 25px;
   color: #2c9e98;
 }
+.main .pullReqLink {
+  font-size: 22px;
+  color: wheat;
+}
 
 .textarea__input {
   width: 1220px;
