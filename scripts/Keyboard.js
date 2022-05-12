@@ -17,12 +17,14 @@ export class Keyboard {
     const form = document.createElement('form');
     const header = document.createElement('h1');
     const subtitle = document.createElement('p');
+    const pullReqLink = document.createElement('a');
     this.display = document.createElement('textarea');
     const keyboardSection = document.createElement('section');
 
     main.classList.add('main');
     header.classList.add('header');
     subtitle.classList.add('subtitle');
+    pullReqLink.classList.add('pullReqLink');
     form.classList.add('textarea__form');
     this.display.classList.add('textarea__input');
     keyboardSection.classList.add('keyboard');
@@ -30,10 +32,14 @@ export class Keyboard {
     document.body.appendChild(main);
     main.appendChild(header);
     main.appendChild(subtitle);
+    main.appendChild(pullReqLink);
     main.appendChild(form);
     form.appendChild(this.display);
     header.innerHTML = 'Virtual Keyboard For Windows';
     subtitle.innerHTML = 'Press CTRL + ALT to change the language';
+    pullReqLink.innerHTML = 'Link to Pull Request';
+    pullReqLink.setAttribute('href','https://github.com/NikolayKovzik/virtual-keyboard/pull/2');
+    pullReqLink.setAttribute('target','_blank');
 
     this.createVirtualKeys(keyboardSection);
     document.addEventListener('keydown', (event) => { this.keyDownEventHandler(event); });
