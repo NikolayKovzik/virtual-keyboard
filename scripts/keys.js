@@ -328,7 +328,7 @@ export default [
     code: 'Quote',
     en: '\'',
     ru: 'э',
-    enShift: '\'',
+    enShift: '"',
     ruShift: 'Э',
     ruCaps: 'Э',
   },

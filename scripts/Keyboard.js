@@ -15,23 +15,35 @@ export class Keyboard {
   init() {
     const main = document.createElement('main');
     const form = document.createElement('form');
+    const header = document.createElement('h1');
+    const subtitle = document.createElement('p');
     this.display = document.createElement('textarea');
     const keyboardSection = document.createElement('section');
 
     main.classList.add('main');
+    header.classList.add('header');
+    subtitle.classList.add('subtitle');
     form.classList.add('textarea__form');
     this.display.classList.add('textarea__input');
     keyboardSection.classList.add('keyboard');
 
     document.body.appendChild(main);
+    main.appendChild(header);
+    main.appendChild(subtitle);
     main.appendChild(form);
     form.appendChild(this.display);
+    header.innerHTML = 'Virtual Keyboard For Windows'
+    subtitle.innerHTML = 'Press CTRL + ALT to change the language'
 
     this.createVirtualKeys(keyboardSection);
     document.addEventListener('keydown', (event) => { this.keyDownEventHandler(event) });
     document.addEventListener('keyup', (event) => { this.keyUpEventHandler(event) });
     main.appendChild(keyboardSection);
     this.display.focus();
+
+    window.addEventListener('beforeunload', ()=>{
+      localStorage.setItem('virtualKeyboardLang', this.lang);
+    });
   }
 
   createVirtualKeys(keyboardSection) {
@@ -290,6 +302,8 @@ export class Keyboard {
       }
 
       this.display.value = value.slice(0, startPos) + symbol + value.slice(endPos, value.length);
+      // this.display.setRangeText(symbol, startPos, endPos, 'end');
+      // console.log(symbol)
       this._setCursorPosition(startPos, -1);
     } else {
       this._setCursorPosition(startPos, 0);
@@ -331,6 +345,7 @@ export class Keyboard {
 
   switchLang() {
     this.lang = this.lang === 'en' ? 'ru' : 'en';
+    localStorage.setItem('virtualKeyboardLang', this.lang);
     if (this.isCapsPressed) {
       keys.forEach((key) => {
         if (`${this.lang}Caps` in key) {
@@ -380,3 +395,4 @@ export class Keyboard {
     this.display.selectionEnd = startPos - shift;
   };
 }
+
