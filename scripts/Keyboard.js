@@ -28,8 +28,8 @@ export class Keyboard {
     form.appendChild(this.display);
 
     this.createVirtualKeys(keyboardSection);
-    this.display.addEventListener('keydown', (event) => { this.keyDownEventHandler(event) });
-    this.display.addEventListener('keyup', (event) => { this.keyUpEventHandler(event) });
+    document.addEventListener('keydown', (event) => { this.keyDownEventHandler(event) });
+    document.addEventListener('keyup', (event) => { this.keyUpEventHandler(event) });
     main.appendChild(keyboardSection);
     this.display.focus();
   }
@@ -41,34 +41,102 @@ export class Keyboard {
       keyButton.classList.add('keyboard__key');
       keyButton.innerHTML = key[`${this.lang}`];
       keyButton.classList.add(`${key.code}`);
+      keyButton.addEventListener('mouseout', () => {
+        document.querySelector(`.${key.code}`).classList.remove('mousedown');
+      });
+      keyButton.addEventListener('mousedown', () => {
+        document.querySelector(`.${key.code}`).classList.add('mousedown');
+      });
+      keyButton.addEventListener('mouseup', () => {
+        document.querySelector(`.${key.code}`).classList.remove('mousedown');
+      });
       switch (key.code) {
         case 'Backspace':
-          keyButton.addEventListener('click', () => {
+          keyButton.addEventListener('mousedown', () => {
             this.deleteSelected(key.code);
+          });
+          keyButton.addEventListener('mouseup', () => {
+            this._setCursorPosition(this.display.selectionStart, 0);
           });
           break;
         case 'Enter':
-          keyButton.addEventListener('click', () => {
+          keyButton.addEventListener('mousedown', () => {
             this.insertCharacter(key);
+          });
+          keyButton.addEventListener('mouseup', () => {
+            this._setCursorPosition(this.display.selectionStart, 0);
           });
           break;
         case 'CapsLock':
-          keyButton.addEventListener('click', () => {
+          keyButton.addEventListener('mousedown', () => {
             this.toggleCapsLock();
+          });
+          keyButton.addEventListener('mouseup', () => {
+            this._setCursorPosition(this.display.selectionStart, 0);
           });
           break;
         case 'Delete':
-          keyButton.addEventListener('click', () => {
+          keyButton.addEventListener('mousedown', () => {
             this.deleteSelected(key.code);
+          });
+          keyButton.addEventListener('mouseup', () => {
+            this._setCursorPosition(this.display.selectionStart, 0);
           });
           break;
         case 'Lang':
-          keyButton.addEventListener('click', () => {
+          keyButton.addEventListener('mousedown', () => {
             this.switchLang();
+          });
+          keyButton.addEventListener('mouseup', () => {
+            this._setCursorPosition(this.display.selectionStart, 0);
+          });
+          break;
+        case 'ControlRight':
+          keyButton.addEventListener('mousedown', () => {
+            this.isControlPressed = true;
+            if (this.isControlPressed && this.isAltPressed) {
+              this.switchLang();
+            }
+          });
+          keyButton.addEventListener('mouseup', () => {
+            this.isControlPressed = false;
+          });
+          break;
+        case 'ControlLeft':
+          keyButton.addEventListener('mousedown', () => {
+            this.isControlPressed = true;
+            if (this.isControlPressed && this.isAltPressed) {
+              this.switchLang();
+            }
+          });
+          keyButton.addEventListener('mouseup', () => {
+            this.isControlPressed = false;
+          });
+          break;
+        case 'AltRight':
+          keyButton.addEventListener('mousedown', () => {
+            this.isAltPressed = true;
+            if (this.isControlPressed && this.isAltPressed) {
+              this.switchLang();
+            }
+          });
+          keyButton.addEventListener('mouseup', () => {
+            this.isAltPressed = false;
+          });
+          break;
+        case 'AltLeft':
+          keyButton.addEventListener('mousedown', () => {
+            this.isAltPressed = true;
+            if (this.isControlPressed && this.isAltPressed) {
+              this.switchLang();
+            }
+          });
+          keyButton.addEventListener('mouseup', () => {
+            this.isAltPressed = false;
           });
           break;
         default:
-          keyButton.addEventListener('click', () => {
+          keyButton.addEventListener('mousedown', () => {
             this.insertCharacter(key);
           });
           break;
@@ -79,6 +147,9 @@ export class Keyboard {
 
   keyDownEventHandler(event) {
     event.preventDefault();
+    if (this.keyCodes.includes(event.code)) {
+      document.querySelector(`.${event.code}`).classList.add('keydown');
+    }
     switch (event.code) {
       case 'Backspace':
         this.deleteSelected(event.code);
@@ -96,25 +167,25 @@ export class Keyboard {
         break;
       case 'ControlRight':
         this.isControlPressed = true;
-        if(this.isControlPressed && this.isAltPressed){
+        if (this.isControlPressed && this.isAltPressed) {
           this.switchLang();
         }
         break;
       case 'ControlLeft':
         this.isControlPressed = true;
-        if(this.isControlPressed && this.isAltPressed){
+        if (this.isControlPressed && this.isAltPressed) {
           this.switchLang();
         }
         break;
       case 'AltRight':
         this.isAltPressed = true;
-        if(this.isControlPressed && this.isAltPressed){
+        if (this.isControlPressed && this.isAltPressed) {
           this.switchLang();
         }
         break;
       case 'AltLeft':
         this.isAltPressed = true;
-        if(this.isControlPressed && this.isAltPressed){
+        if (this.isControlPressed && this.isAltPressed) {
           this.switchLang();
         }
         break;
@@ -130,6 +201,9 @@ export class Keyboard {
 
   keyUpEventHandler(event) {
     event.preventDefault();
+    if (this.keyCodes.includes(event.code)) {
+      document.querySelector(`.${event.code}`).classList.remove('keydown');
+    }
     switch (event.code) {
       case 'ControlRight':
         this.isControlPressed = false;
