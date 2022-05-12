@@ -1,7 +1,7 @@
 export default [
   {
     code: 'Backquote',
-    en: '`',
+    en: '`   ',
     ru: 'ё',
     enShift: '~',
     ruShift: 'Ё',

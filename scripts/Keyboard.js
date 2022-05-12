@@ -1,5 +1,5 @@
-/* eslint-disable*/
 import keys from "./keys.js";
+
 export class Keyboard {
   constructor(lang) {
     this.lang = lang;
@@ -32,16 +32,16 @@ export class Keyboard {
     main.appendChild(subtitle);
     main.appendChild(form);
     form.appendChild(this.display);
-    header.innerHTML = 'Virtual Keyboard For Windows'
-    subtitle.innerHTML = 'Press CTRL + ALT to change the language'
+    header.innerHTML = 'Virtual Keyboard For Windows';
+    subtitle.innerHTML = 'Press CTRL + ALT to change the language';
 
     this.createVirtualKeys(keyboardSection);
-    document.addEventListener('keydown', (event) => { this.keyDownEventHandler(event) });
-    document.addEventListener('keyup', (event) => { this.keyUpEventHandler(event) });
+    document.addEventListener('keydown', (event) => { this.keyDownEventHandler(event); });
+    document.addEventListener('keyup', (event) => { this.keyUpEventHandler(event); });
     main.appendChild(keyboardSection);
     this.display.focus();
 
-    window.addEventListener('beforeunload', ()=>{
+    window.addEventListener('beforeunload', () => {
       localStorage.setItem('virtualKeyboardLang', this.lang);
     });
   }
@@ -61,7 +61,7 @@ export class Keyboard {
       });
       keyButton.addEventListener('mouseup', () => {
         document.querySelector(`.${key.code}`).classList.remove('mousedown');
-        this._setCursorPosition(this.display.selectionStart, 0);
+        this.setCursorPosition(this.display.selectionStart, 0);
       });
       switch (key.code) {
         case 'Backspace':
@@ -181,7 +181,10 @@ export class Keyboard {
         break;
       case 'Enter':
         this.insertCharacter(keys.find((key) => {
-          return key.code === 'Enter' ? true : false;
+          if (key.code === 'Enter') {
+            return true;
+          }
+          return false;
         }));
         break;
       case 'CapsLock':
@@ -232,7 +235,10 @@ export class Keyboard {
       default:
         if (this.keyCodes.includes(event.code)) {
           this.insertCharacter(keys.find((key) => {
-            return key.code === `${event.code}` ? true : false;
+            if (key.code === `${event.code}`) {
+              return true;
+            }
+            return false;
           }));
         }
         break;
@@ -265,17 +271,17 @@ export class Keyboard {
         this.isShiftPressed = false;
         this.toggleCapsAndShift();
         break;
+      default: break;
     }
   }
 
   insertCharacter(key) {
-    let startPos = this.display.selectionStart;
-    let endPos = this.display.selectionEnd;
-    let value = this.display.value;
+    const startPos = this.display.selectionStart;
+    const endPos = this.display.selectionEnd;
+    const val = this.display.value;
     let symbol = '';
 
     if (key.type !== 'comand') {
-
       if (this.isCapsPressed && this.isShiftPressed) {
         if (`${this.lang}Caps` in key) {
           symbol = key[`${this.lang}`];
@@ -301,14 +307,15 @@ export class Keyboard {
         symbol = '\t';
       }
 
-      this.display.value = value.slice(0, startPos) + symbol + value.slice(endPos, value.length);
-      // this.display.setRangeText(symbol, startPos, endPos, 'end');
-      // console.log(symbol)
-      this._setCursorPosition(startPos, -1);
-    } else {
-      this._setCursorPosition(startPos, 0);
-    }
+      this.display.value = val.slice(0, startPos) + symbol + val.slice(endPos, val.length);
 
+      this.setCursorPosition(startPos, -1);
+      if (key.code === 'Backquote') {
+        this.setCursorPosition(startPos, -4);
+      }
+    } else {
+      this.setCursorPosition(startPos, 0);
+    }
   }
 
   toggleCapsAndShift() {
@@ -319,7 +326,7 @@ export class Keyboard {
         } else {
           document.querySelector(`.${key.code}`).innerHTML = key[`${this.lang}Shift`];
         }
-      })
+      });
     } else if (this.isCapsPressed && !this.isShiftPressed) {
       keys.forEach((key) => {
         if (`${this.lang}Caps` in key) {
@@ -327,21 +334,19 @@ export class Keyboard {
         } else {
           document.querySelector(`.${key.code}`).innerHTML = key[`${this.lang}`];
         }
-      })
+      });
     } else if (!this.isCapsPressed && this.isShiftPressed) {
       keys.forEach((key) => {
         document.querySelector(`.${key.code}`).innerHTML = key[`${this.lang}Shift`];
-      })
+      });
     } else if (!this.isCapsPressed && !this.isShiftPressed) {
       keys.forEach((key) => {
         document.querySelector(`.${key.code}`).innerHTML = key[`${this.lang}`];
-      })
+      });
     }
 
-    this._setCursorPosition(this.display.selectionStart, 0);
+    this.setCursorPosition(this.display.selectionStart, 0);
   }
-
-
 
   switchLang() {
     this.lang = this.lang === 'en' ? 'ru' : 'en';
@@ -353,18 +358,18 @@ export class Keyboard {
         } else {
           document.querySelector(`.${key.code}`).innerHTML = key[`${this.lang}`];
         }
-      })
+      });
     } else {
       keys.forEach((key) => {
         document.querySelector(`.${key.code}`).innerHTML = key[`${this.lang}`];
-      })
+      });
     }
   }
 
   deleteSelected(keyCode) {
-    let startPos = this.display.selectionStart;
-    let endPos = this.display.selectionEnd;
-    let value = this.display.value;
+    const startPos = this.display.selectionStart;
+    const endPos = this.display.selectionEnd;
+    const val = this.display.value;
 
     if (startPos === endPos && startPos === 0 && keyCode === 'Backspace') {
       this.display.focus();
@@ -374,25 +379,24 @@ export class Keyboard {
     }
 
     if (startPos === endPos && keyCode === 'Backspace') {
-      this.display.value = value.slice(0, startPos - 1) + value.slice(endPos, value.length);
-      this._setCursorPosition(startPos, 1);
+      this.display.value = val.slice(0, startPos - 1) + val.slice(endPos, val.length);
+      this.setCursorPosition(startPos, 1);
     }
 
     if (startPos === endPos && keyCode === 'Delete') {
-      this.display.value = value.slice(0, startPos) + value.slice(endPos + 1, value.length);
-      this._setCursorPosition(startPos, 0);
+      this.display.value = val.slice(0, startPos) + val.slice(endPos + 1, val.length);
+      this.setCursorPosition(startPos, 0);
     }
 
     if (startPos !== endPos) {
-      this.display.value = value.slice(0, startPos) + value.slice(endPos, value.length);
-      this._setCursorPosition(startPos, 0);
+      this.display.value = val.slice(0, startPos) + val.slice(endPos, val.length);
+      this.setCursorPosition(startPos, 0);
     }
   }
 
-  _setCursorPosition(startPos, shift) {
+  setCursorPosition(startPos, shift) {
     this.display.focus();
     this.display.selectionStart = startPos - shift;
     this.display.selectionEnd = startPos - shift;
-  };
+  }
 }
-
