@@ -49,46 +49,48 @@ export class Keyboard {
       });
       keyButton.addEventListener('mouseup', () => {
         document.querySelector(`.${key.code}`).classList.remove('mousedown');
+        this._setCursorPosition(this.display.selectionStart, 0);
       });
       switch (key.code) {
         case 'Backspace':
           keyButton.addEventListener('mousedown', () => {
             this.deleteSelected(key.code);
           });
-          keyButton.addEventListener('mouseup', () => {
-            this._setCursorPosition(this.display.selectionStart, 0);
-          });
           break;
         case 'Enter':
           keyButton.addEventListener('mousedown', () => {
             this.insertCharacter(key);
-          });
-          keyButton.addEventListener('mouseup', () => {
-            this._setCursorPosition(this.display.selectionStart, 0);
           });
           break;
         case 'CapsLock':
           keyButton.addEventListener('mousedown', () => {
             this.toggleCapsLock();
           });
+          break;
+        case 'ShiftRight':
+          keyButton.addEventListener('mousedown', () => {
+            this.shiftPressing();
+          });
           keyButton.addEventListener('mouseup', () => {
-            this._setCursorPosition(this.display.selectionStart, 0);
+            this.shiftRelease();
+          });
+          break;
+        case 'ShiftLeft':
+          keyButton.addEventListener('mousedown', () => {
+            this.shiftPressing();
+          });
+          keyButton.addEventListener('mouseup', () => {
+            this.shiftRelease();
           });
           break;
         case 'Delete':
           keyButton.addEventListener('mousedown', () => {
             this.deleteSelected(key.code);
           });
-          keyButton.addEventListener('mouseup', () => {
-            this._setCursorPosition(this.display.selectionStart, 0);
-          });
           break;
         case 'Lang':
           keyButton.addEventListener('mousedown', () => {
             this.switchLang();
-          });
-          keyButton.addEventListener('mouseup', () => {
-            this._setCursorPosition(this.display.selectionStart, 0);
           });
           break;
         case 'ControlRight':
@@ -162,6 +164,12 @@ export class Keyboard {
       case 'CapsLock':
         this.toggleCapsLock();
         break;
+      case 'ShiftRight':
+        this.shiftPressing();
+        break;
+      case 'ShiftLeft':
+        this.shiftPressing();
+        break;
       case 'Delete':
         this.deleteSelected(event.code);
         break;
@@ -217,6 +225,12 @@ export class Keyboard {
       case 'AltLeft':
         this.isAltPressed = false;
         break;
+      case 'ShiftRight':
+        this.shiftRelease();
+        break;
+      case 'ShiftLeft':
+        this.shiftRelease();
+        break;
     }
   }
 
@@ -227,13 +241,27 @@ export class Keyboard {
     let symbol = '';
 
     if (key.type !== 'comand') {
-      if (!this.isCapsPressed) {
-        symbol = key[`${this.lang}`];
-      } else if (`${this.lang}Caps` in key) {
-        symbol = key[`${this.lang}Caps`];
-      } else {
+
+      if (this.isCapsPressed && this.isShiftPressed) {
+        if (`${this.lang}Caps` in key) {
+          symbol = key[`${this.lang}`];
+        } else {
+          symbol = key[`${this.lang}Shift`];
+        }
+      } else if (this.isCapsPressed && !this.isShiftPressed) {
+        if (`${this.lang}Caps` in key) {
+          symbol = key[`${this.lang}Caps`];
+        } else {
+          symbol = key[`${this.lang}`];
+        }
+      } else if (!this.isCapsPressed && this.isShiftPressed) {
+          symbol = key[`${this.lang}Shift`];
+      } else if (!this.isCapsPressed && !this.isShiftPressed) {
         symbol = key[`${this.lang}`];
       }
+
+
+
 
       if (key.code === 'Enter') {
         symbol = '\n';
@@ -273,6 +301,41 @@ export class Keyboard {
     }
     this._setCursorPosition(this.display.selectionStart, 0);
   }
+
+  shiftPressing() {
+    this.isShiftPressed = true;
+    if (this.isCapsPressed) {
+      keys.forEach((key) => {
+        if (`${this.lang}Caps` in key) {
+          document.querySelector(`.${key.code}`).innerHTML = key[`${this.lang}`];
+        } else {
+          document.querySelector(`.${key.code}`).innerHTML = key[`${this.lang}Shift`];
+        }
+      })
+    } else {
+      keys.forEach((key) => {
+        document.querySelector(`.${key.code}`).innerHTML = key[`${this.lang}Shift`];
+      })
+    }
+  }
+
+  shiftRelease() {
+    this.isShiftPressed = false;
+    if (this.isCapsPressed) {
+      keys.forEach((key) => {
+        if (`${this.lang}Caps` in key) {
+          document.querySelector(`.${key.code}`).innerHTML = key[`${this.lang}Caps`];
+        } else {
+          document.querySelector(`.${key.code}`).innerHTML = key[`${this.lang}`];
+        }
+      })
+    } else {
+      keys.forEach((key) => {
+        document.querySelector(`.${key.code}`).innerHTML = key[`${this.lang}`];
+      })
+    }
+  }
+
 
   switchLang() {
     this.lang = this.lang === 'en' ? 'ru' : 'en';
