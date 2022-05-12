@@ -11,6 +11,14 @@ body {
   gap: 20px;
   font-family: "Montserrat";
 }
+.main .header {
+  font-size: 40px;
+  color: #2c9e98;
+}
+.main .subtitle {
+  font-size: 25px;
+  color: #2c9e98;
+}
 
 .textarea__input {
   width: 1220px;
@@ -23,6 +31,13 @@ body {
   outline: none;
   resize: none;
   font-size: 30px;
+}
+.textarea__input::-webkit-scrollbar {
+  width: 10px;
+}
+.textarea__input::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: #6fb7c2;
 }
 
 .keyboard {
@@ -58,6 +73,11 @@ body {
   -moz-box-shadow: 0px 0px 27px 23px rgba(111, 183, 194, 0.34);
   box-shadow: 0px 0px 14px 3px red;
   transform: scale(1.05);
+}
+
+.ArrowUp,
+.ArrowDown {
+  font-size: 30px;
 }
 
 .Backspace {

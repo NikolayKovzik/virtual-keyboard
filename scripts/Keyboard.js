@@ -15,23 +15,35 @@ export class Keyboard {
   init() {
     const main = document.createElement('main');
     const form = document.createElement('form');
+    const header = document.createElement('h1');
+    const subtitle = document.createElement('p');
     this.display = document.createElement('textarea');
     const keyboardSection = document.createElement('section');
 
     main.classList.add('main');
+    header.classList.add('header');
+    subtitle.classList.add('subtitle');
     form.classList.add('textarea__form');
     this.display.classList.add('textarea__input');
     keyboardSection.classList.add('keyboard');
 
     document.body.appendChild(main);
+    main.appendChild(header);
+    main.appendChild(subtitle);
     main.appendChild(form);
     form.appendChild(this.display);
+    header.innerHTML = 'Virtual Keyboard For Windows'
+    subtitle.innerHTML = 'Press CTRL + ALT to change the language'
 
     this.createVirtualKeys(keyboardSection);
     document.addEventListener('keydown', (event) => { this.keyDownEventHandler(event) });
     document.addEventListener('keyup', (event) => { this.keyUpEventHandler(event) });
     main.appendChild(keyboardSection);
     this.display.focus();
+
+    window.addEventListener('beforeunload', ()=>{
+      localStorage.setItem('virtualKeyboardLang', this.lang);
+    });
   }
 
   createVirtualKeys(keyboardSection) {
@@ -49,46 +61,59 @@ export class Keyboard {
       });
       keyButton.addEventListener('mouseup', () => {
         document.querySelector(`.${key.code}`).classList.remove('mousedown');
+        this._setCursorPosition(this.display.selectionStart, 0);
       });
       switch (key.code) {
         case 'Backspace':
           keyButton.addEventListener('mousedown', () => {
             this.deleteSelected(key.code);
           });
-          keyButton.addEventListener('mouseup', () => {
-            this._setCursorPosition(this.display.selectionStart, 0);
-          });
           break;
         case 'Enter':
           keyButton.addEventListener('mousedown', () => {
             this.insertCharacter(key);
           });
-          keyButton.addEventListener('mouseup', () => {
-            this._setCursorPosition(this.display.selectionStart, 0);
-          });
           break;
         case 'CapsLock':
           keyButton.addEventListener('mousedown', () => {
-            this.toggleCapsLock();
+            if (this.isCapsPressed) {
+              document.querySelector('.CapsLock').classList.remove('active');
+              this.isCapsPressed = false;
+            } else {
+              document.querySelector('.CapsLock').classList.add('active');
+              this.isCapsPressed = true;
+            }
+            this.toggleCapsAndShift();
+          });
+          break;
+        case 'ShiftRight':
+          keyButton.addEventListener('mousedown', () => {
+            this.isShiftPressed = true;
+            this.toggleCapsAndShift();
           });
           keyButton.addEventListener('mouseup', () => {
-            this._setCursorPosition(this.display.selectionStart, 0);
+            this.isShiftPressed = false;
+            this.toggleCapsAndShift();
+          });
+          break;
+        case 'ShiftLeft':
+          keyButton.addEventListener('mousedown', () => {
+            this.isShiftPressed = true;
+            this.toggleCapsAndShift();
+          });
+          keyButton.addEventListener('mouseup', () => {
+            this.isShiftPressed = false;
+            this.toggleCapsAndShift();
           });
           break;
         case 'Delete':
           keyButton.addEventListener('mousedown', () => {
             this.deleteSelected(key.code);
           });
-          keyButton.addEventListener('mouseup', () => {
-            this._setCursorPosition(this.display.selectionStart, 0);
-          });
           break;
         case 'Lang':
           keyButton.addEventListener('mousedown', () => {
             this.switchLang();
-          });
-          keyButton.addEventListener('mouseup', () => {
-            this._setCursorPosition(this.display.selectionStart, 0);
           });
           break;
         case 'ControlRight':
@@ -160,7 +185,22 @@ export class Keyboard {
         }));
         break;
       case 'CapsLock':
-        this.toggleCapsLock();
+        if (this.isCapsPressed) {
+          document.querySelector('.CapsLock').classList.remove('active');
+          this.isCapsPressed = false;
+        } else {
+          document.querySelector('.CapsLock').classList.add('active');
+          this.isCapsPressed = true;
+        }
+        this.toggleCapsAndShift();
+        break;
+      case 'ShiftRight':
+        this.isShiftPressed = true;
+        this.toggleCapsAndShift();
+        break;
+      case 'ShiftLeft':
+        this.isShiftPressed = true;
+        this.toggleCapsAndShift();
         break;
       case 'Delete':
         this.deleteSelected(event.code);
@@ -217,6 +257,14 @@ export class Keyboard {
       case 'AltLeft':
         this.isAltPressed = false;
         break;
+      case 'ShiftRight':
+        this.isShiftPressed = false;
+        this.toggleCapsAndShift();
+        break;
+      case 'ShiftLeft':
+        this.isShiftPressed = false;
+        this.toggleCapsAndShift();
+        break;
     }
   }
 
@@ -227,11 +275,22 @@ export class Keyboard {
     let symbol = '';
 
     if (key.type !== 'comand') {
-      if (!this.isCapsPressed) {
-        symbol = key[`${this.lang}`];
-      } else if (`${this.lang}Caps` in key) {
-        symbol = key[`${this.lang}Caps`];
-      } else {
+
+      if (this.isCapsPressed && this.isShiftPressed) {
+        if (`${this.lang}Caps` in key) {
+          symbol = key[`${this.lang}`];
+        } else {
+          symbol = key[`${this.lang}Shift`];
+        }
+      } else if (this.isCapsPressed && !this.isShiftPressed) {
+        if (`${this.lang}Caps` in key) {
+          symbol = key[`${this.lang}Caps`];
+        } else {
+          symbol = key[`${this.lang}`];
+        }
+      } else if (!this.isCapsPressed && this.isShiftPressed) {
+        symbol = key[`${this.lang}Shift`];
+      } else if (!this.isCapsPressed && !this.isShiftPressed) {
         symbol = key[`${this.lang}`];
       }
 
@@ -242,11 +301,9 @@ export class Keyboard {
         symbol = '\t';
       }
 
-      // if (startPos !== endPos) {
-      //   this.display.value = value.slice(0, startPos) + value.slice(endPos, value.length);
-      // }
-
       this.display.value = value.slice(0, startPos) + symbol + value.slice(endPos, value.length);
+      // this.display.setRangeText(symbol, startPos, endPos, 'end');
+      // console.log(symbol)
       this._setCursorPosition(startPos, -1);
     } else {
       this._setCursorPosition(startPos, 0);
@@ -254,28 +311,41 @@ export class Keyboard {
 
   }
 
-  toggleCapsLock() {
-    this.isCapsPressed = this.isCapsPressed ? false : true;
-    if (this.isCapsPressed) {
-      document.querySelector('.CapsLock').classList.add('active');
-      keys.forEach((key) => {
-        if (`${this.lang}Caps` in key) {
-          document.querySelector(`.${key.code}`).innerHTML = key[`${this.lang}Caps`];
-        }
-      })
-    } else {
-      document.querySelector('.CapsLock').classList.remove('active');
+  toggleCapsAndShift() {
+    if (this.isCapsPressed && this.isShiftPressed) {
       keys.forEach((key) => {
         if (`${this.lang}Caps` in key) {
           document.querySelector(`.${key.code}`).innerHTML = key[`${this.lang}`];
+        } else {
+          document.querySelector(`.${key.code}`).innerHTML = key[`${this.lang}Shift`];
         }
       })
+    } else if (this.isCapsPressed && !this.isShiftPressed) {
+      keys.forEach((key) => {
+        if (`${this.lang}Caps` in key) {
+          document.querySelector(`.${key.code}`).innerHTML = key[`${this.lang}Caps`];
+        } else {
+          document.querySelector(`.${key.code}`).innerHTML = key[`${this.lang}`];
+        }
+      })
+    } else if (!this.isCapsPressed && this.isShiftPressed) {
+      keys.forEach((key) => {
+        document.querySelector(`.${key.code}`).innerHTML = key[`${this.lang}Shift`];
+      })
+    } else if (!this.isCapsPressed && !this.isShiftPressed) {
+      keys.forEach((key) => {
+        document.querySelector(`.${key.code}`).innerHTML = key[`${this.lang}`];
+      })
     }
+
     this._setCursorPosition(this.display.selectionStart, 0);
   }
 
+
+
   switchLang() {
     this.lang = this.lang === 'en' ? 'ru' : 'en';
+    localStorage.setItem('virtualKeyboardLang', this.lang);
     if (this.isCapsPressed) {
       keys.forEach((key) => {
         if (`${this.lang}Caps` in key) {
@@ -324,15 +394,5 @@ export class Keyboard {
     this.display.selectionStart = startPos - shift;
     this.display.selectionEnd = startPos - shift;
   };
-
-  // lineBreak() {
-  //   let startPos = this.display.selectionStart;
-  //   let endPos = this.display.selectionEnd;
-  //   let value = this.display.value;
-  //   if (startPos !== endPos) {
-  //     this.display.value = value.slice(0, startPos) + value.slice(endPos, value.length);
-  //   }
-  //   this.display.value = value.slice(0, startPos) + '\n' + value.slice(endPos, value.length);
-  //   this._setCursorPosition(startPos, -1);
-  // }
 }
+
