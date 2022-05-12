@@ -1,0 +1,127 @@
+//  sass --watch .\styles\scss\:.\styles\css
+
+body {
+    background-color: rgb(20 72 65);
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    gap: 20px;
+    font-family: "Montserrat";
+    .header {
+        font-size: 40px;
+        color: #2c9e98;
+    }
+
+    .subtitle {
+        font-size: 25px;
+        color: #2c9e98;
+    }
+}
+
+.textarea__input {
+    width: 1220px;
+    height: 200px;
+    padding: 10px;
+    border: 2px solid #1f1a76;
+    border-radius: 5px;
+    box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
+    overflow: auto;
+    outline: none;
+    resize: none;
+    font-size: 30px;
+    &::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        background-color: #6fb7c2;
+    }
+}
+
+.keyboard {
+    width: 1235px; //1200
+    height: 410px;
+    padding: 10px 10px 0px 10px;
+    background-color: #85a3d9;
+    border-radius: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    column-gap: 15px;
+    row-gap: 10px;
+
+    &__key {
+        width: 65px;
+        height: 65px;
+        background-color: #6fb7c2;
+        border-radius: 5px;
+        padding: 0;
+        margin: 0;
+        cursor: pointer;
+        font-size: 20px;
+        font-weight: bold;
+
+        &:hover {
+            transition: 0.3s;
+            transform: scale(1.05);
+        }
+
+        &.keydown,
+        &.mousedown {
+            transition: 0.2s;
+            -webkit-box-shadow: 0px 0px 27px 23px rgba(111, 183, 194, 0.34);
+            -moz-box-shadow: 0px 0px 27px 23px rgba(111, 183, 194, 0.34);
+            box-shadow: 0px 0px 14px 3px red;
+            transform: scale(1.05);
+        }
+
+    }
+}
+
+.ArrowUp,
+.ArrowDown {
+    font-size: 30px;
+}
+
+.Backspace {
+    width: 185px;
+}
+
+.Tab {
+    width: 85px;
+}
+
+.Delete {
+    width: 85px;
+}
+
+.CapsLock {
+    width: 120px;
+    &.active {
+        color: rgb(180, 34, 34);
+    }
+}
+
+.Enter {
+    width: 210px;
+}
+
+.ShiftRight,
+.ShiftLeft {
+    width: 170px;
+}
+
+.Space {
+    width: 520px;
+}
+
+.ControlRight,
+.Controlleft {
+    width: 90px;
+}
